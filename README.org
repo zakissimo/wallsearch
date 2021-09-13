@@ -1,0 +1,68 @@
+#+TITLE: wallsearch
+#+DESCRIPTION: Download wallpapers from wallhaven.cc in your cli (cs50 final project)
+
+Video presentation :
+
+* Introduction
+This application was made and submitted as part of the final project of [[https://cs50.harvard.edu/][the cs50 course]]. After a deep thinking session I came to the conclusion that time is limited for me. I had this crazy idea of creating an app that downloads youtube subtitles and stores words with their time stamps in a binary tree or a hash table and essentially making a search engine for youtube videos that spits out the exact moment someone said something, because we all had that moment when we know we saw it somewhere, but what video was it? And when did they mention this? Needless to say this project is NOT about any of that.
+I'm not ready and I don't have the time. What I did instead is much smaller, much simpler.
+
+** Inspiration
+During [[https://cs50.harvard.edu/][the cs50 course]] I truly realised the superiority of GNU/Linux over Windows, so, even though I was a user of the later my whole life, I decided that it was the perfect opportunity to make the switch. And during my discoveries of the different applications, I saw [[https://github.com/pystardust/waldl][pystardust's waldl]]. A simple but very effective bash script meant to query the wallpaper website https://wallhaven.cc to preview thumbnails, select what you like, and download the FHD versions. Although it's very effective, it's not cross plateform and it uses [[https://github.com/muennich/sxiv][the image viewer sxiv]]. I love sxiv, but I know not every linux user have it installed and I like python. The idea that I can take a bash script and port it to python sounds really cool to me, so that's what I did!
+
+* Features
+- Query wallhaven.cc with user's keyword
+- Select desired wallpapers by deleting thumbnails
+- Cross platform (using native file explorer and image viewer)
+
+* Dependencies
+#+begin_src python
+
+from sys import argv
+from pathlib import Path
+import re, os, webbrowser, tempfile, requests
+
+#+end_src
+
+Requests is the only non-built-in library. For a good experience, please **make sure your file explorer can display images easily**.
+
+#+begin_src
+
+pip install requests
+
+#+end_src
+
+* Usage
+#+begin_src python
+
+if len(argv) != 2:
+    print(f"Usage: python {argv[0]} query")
+    return 1
+
+#+end_src
+
+Replace keyword below by your search query (cats, landscapes, 'among us'...).
+
+#+begin_src
+
+$ python wallsearch.py keyword
+
+#+end_src
+
+* Wallhaven's api
+#+begin_src python
+
+user_query = argv[1]
+r = requests.get(
+    f"https://wallhaven.cc/api/v1/search?q={user_query}&sorting=views&order=desc"
+)
+output = r.json()["data"]
+
+#+end_src
+
+One can easily customize preferences by editing the above url. Wallhaven provide some [[https://wallhaven.cc/help/api][documentation]] in that regard.
+
+* Potential optimizations
+- Provide user with options regarding the query (sort by ...)
+- Allow for custom path output
+- Prettify the instruction prompts

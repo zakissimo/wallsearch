@@ -1,7 +1,7 @@
 #+TITLE: wallsearch
 #+DESCRIPTION: Download wallpapers from wallhaven.cc in your cli (cs50 final project)
 
-Video presentation :
+Video presentation : https://youtu.be/6xaIm_UFXeo
 
 * Introduction
 This application was made and submitted as part of the final project of [[https://cs50.harvard.edu/][the cs50 course]]. After a deep thinking session I came to the conclusion that time is limited for me. I had this crazy idea of creating an app that downloads youtube subtitles and stores words with their time stamps in a binary tree or a hash table and essentially making a search engine for youtube videos that spits out the exact moment someone said something, because we all had that moment when we know we saw it somewhere, but what video was it? And when did they mention this? Needless to say this project is NOT about any of that.

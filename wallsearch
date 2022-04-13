@@ -3,10 +3,10 @@
 import re
 import os
 import tempfile
-import requests
 import webbrowser
 from sys import argv
 from pathlib import Path
+import requests
 
 
 def init():
@@ -18,10 +18,10 @@ def init():
 
     # Querying wallhaven.cc
     user_query = argv[1]
-    r = requests.get(
+    req = requests.get(
         f"https://wallhaven.cc/api/v1/search?q={user_query}&sorting=views&order=desc"
     )
-    output = r.json()["data"]
+    output = req.json()["data"]
 
     # Error handling
     if not output:
@@ -47,29 +47,29 @@ Please delete the thumbnails you don't like.
 # Download and save image
 def get_img(url, path):
 
-    r = requests.get(url)
-    with open(path, "wb") as f:
-        f.write(r.content)
+    req = requests.get(url)
+    with open(path, "wb") as file:
+        file.write(req.content)
 
 
 # Checking for a 'Pictures' folder in home directory
 def pictures():
-    p = f"{Path.home()}{os.path.sep}Pictures"
-    if os.path.exists(p):
-        return p
-    os.mkdir(p)
-    return p
+    path = f"{Path.home()}{os.path.sep}Pictures"
+    if os.path.exists(path):
+        return path
+    os.mkdir(path)
+    return path
 
 
 def file_proc(output):
 
-    d = {}
+    img_log = {}
 
     # Creating temporary folder
     with tempfile.TemporaryDirectory() as tmp:
 
         # Looping through json output
-        for i in range(len(output)):
+        for i, _ in enumerate(output):
 
             # Saving small thumbnail's url
             url = output[i]["thumbs"]["small"]
@@ -78,13 +78,13 @@ def file_proc(output):
             # Saving full hd image's url link
             image_url = output[i]["path"]
             # Getting file extension
-            s = re.search(r"\..{3}$", image_url)
-            if not s:
+            search = re.search(r"\..{3}$", image_url)
+            if not search:
                 ext = ".jpg"
             else:
-                ext = s.group(0)
+                ext = search.group(0)
 
-            d[image_id] = image_url
+            img_log[image_id] = image_url
 
             # Building full local path to image
             image_path = image_id + ext
@@ -98,7 +98,7 @@ def file_proc(output):
         print("")
 
         # For each remaining image in folder
-        with os.scandir(tmp) as it:
+        with os.scandir(tmp) as thumbs:
 
             # If user deleted every thumbnail
             if not os.listdir(tmp):
@@ -111,13 +111,13 @@ def file_proc(output):
             print("Downloading FHD images, please wait...")
             print("")
 
-            for entry in it:
+            for entry in thumbs:
 
                 # Get image file name & build full local path
                 image_id = os.path.splitext(entry.name)[0]
                 fullpath = pictures() + os.path.sep + entry.name
 
-                get_img(d[image_id], fullpath)
+                get_img(img_log[image_id], fullpath)
 
     # Openning 'Pictures' folder for final display
     webbrowser.open(pictures())
